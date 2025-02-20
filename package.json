@@ -1,9 +1,11 @@
 {
   "scripts": {
-   "start": "npx tsc && node dist/app.js"
+    "start": "npx tsc && node dist/app.js"
   },
   "dependencies": {
-    "express": "^4.21.2"
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "pg": "^8.13.3"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",

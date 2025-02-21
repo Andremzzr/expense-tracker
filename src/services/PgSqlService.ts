@@ -1,6 +1,6 @@
 import { IDatabaseService } from "../interfaces/IDatabaseService";
 import { IExpense } from "../interfaces/IExpense";
-const { Pool } = require('pg');
+import { Pool } from 'pg';
 
 const pool = new Pool({
   user: 'user',

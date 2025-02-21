@@ -3,5 +3,6 @@ export interface IExpense {
     value: number;
     description: string;
     date: Date;
+    userid: number;
 }
 

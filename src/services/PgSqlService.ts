@@ -1,14 +1,5 @@
 import { IDatabaseService } from "../interfaces/IDatabaseService";
 import { IExpense } from "../interfaces/IExpense";
-import { Pool } from 'pg';
-
-const pool = new Pool({
-  user: 'user',
-  password: 'pass',
-  host: 'localhost',
-  port: 5432,
-  database: 'database'
-});
 
 export class PgSqlService implements IDatabaseService {
     connector: any;
@@ -24,8 +15,8 @@ export class PgSqlService implements IDatabaseService {
   
     async createExpense(expense: Omit<IExpense, "id">): Promise<boolean> {
       const result = await this.connector.query(
-        'INSERT INTO expenses (value, description, date) VALUES ($1, $2, $3) RETURNING id',
-        [expense.value, expense.description, expense.date]
+        'INSERT INTO expenses (value, description, date, userid) VALUES ($1, $2, $3, $4) RETURNING id',
+        [expense.value, expense.description, expense.date, expense.userid]
       );
       return result.rowCount > 0;
     }

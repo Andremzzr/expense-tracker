@@ -1,22 +1,18 @@
 
 import express from "express";
+const { getExpense, createExpense } = require('../controllers/expensesController')
 const router = express.Router();
-
 
 /**
  * Get expeneses  => later add filter exprenses logic
  */
-router.get("/:id", function (req, res) {
-    res.send(`Get expemse ${req.params.id}`);
-});
+router.get("/:id", getExpense );
 
 
 /**
  * Create Expense route
  */
-router.post("/", function (req, res) {
-    res.send("POST EXPENSE");
-});
+router.post("/", createExpense);
 
 
 /**

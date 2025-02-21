@@ -17,21 +17,28 @@ async function getExpense(req, res, next) {
     const expense = await databaseService.getExpense(id);
     return res.json(expense)
   } catch (error) {
-    next(error)
+    return res.status(500).json({ error: "Failed to get expense. Please try again later." });
   }
 }
 
 async function createExpense(req, res, next) {
   try {
-    const {value, description, date, userid} = req.body;
-    console.log(req.body)
-    const expense = await databaseService.createExpense({value, description, date, userid});
+    const { value, description, date, userid } = req.body;
+    
+    if (!value || !description || !date || !userid) {
+      return res.status(400).json({ error: "All fields are required." });
+    }
 
-    return res.json(expense);
+    const expense = await databaseService.createExpense({ value, description, date, userid });
+
+    return res.json({message: 'Success!'});
 
   } catch (error) {
-    next(error)
+    console.error("Error creating expense:", error); 
+    
+    return res.status(500).json({ error: "Failed to create expense. Please try again later." });
   }
 }
+
 
 module.exports = { getExpense, createExpense};

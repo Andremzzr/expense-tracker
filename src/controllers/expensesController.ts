@@ -1,4 +1,5 @@
 import { PgSqlService } from "../services/PgSqlService";
+import { IExpense } from "../interfaces/IExpense";
 import { Pool } from 'pg';
 
 const pool = new Pool({
@@ -28,7 +29,7 @@ async function createExpense(req, res, next) {
     if (!value || !description || !date || !userid) {
       return res.status(400).json({ error: "All fields are required." });
     }
-
+    
     const expense = await databaseService.createExpense({ value, description, date, userid });
 
     return res.json({message: 'Success!'});
@@ -41,4 +42,38 @@ async function createExpense(req, res, next) {
 }
 
 
-module.exports = { getExpense, createExpense};
+
+async function updateExpense(req, res, next) {
+  try {
+    const { value, description, date, userid } = req.body;
+    const { id } = req.params;
+
+    
+    if (!value && !description && !date && !userid) {
+      return res.status(400).json({ error: "No fields selected." });
+    }
+
+    const updatePayload : Partial<IExpense> = {}
+
+    if (value !== undefined) updatePayload.value = value;
+    if (description !== undefined) updatePayload.description = description;
+    if (date !== undefined) updatePayload.date = date;
+    if (userid !== undefined) updatePayload.userid = userid;
+
+    const expenseUpdated = await databaseService.updateExpense(id, updatePayload);
+    
+    if( !expenseUpdated ) {
+      return res.status(404).json({ error: "Expense not found or wasn't updated." });
+    }
+
+    return res.json({message: 'Expense updated!'});
+
+  } catch (error) {
+    console.error("Error creating expense:", error); 
+    
+    return res.status(500).json({ error: "Failed to update expense. Please try again later." });
+  }
+}
+
+
+module.exports = { getExpense, createExpense, updateExpense};

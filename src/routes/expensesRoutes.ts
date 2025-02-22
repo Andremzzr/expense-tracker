@@ -1,10 +1,10 @@
 
 import express from "express";
-const { getExpense, createExpense } = require('../controllers/expensesController')
+const { getExpense, createExpense, updateExpense } = require('../controllers/expensesController')
 const router = express.Router();
 
 /**
- * Get expeneses  => later add filter exprenses logic
+ * Get expeneses 
  */
 router.get("/:id", getExpense );
 
@@ -18,9 +18,7 @@ router.post("/", createExpense);
 /**
  * Update Expense route
  */
-router.put("/:id", function (req, res) {
-    res.send(`Update Expenses ${req.params.id}`);
-});
+router.put("/:id", updateExpense);
 
 
 /**

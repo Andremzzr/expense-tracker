@@ -75,5 +75,26 @@ async function updateExpense(req, res, next) {
   }
 }
 
+async function deleteExpense(req, res, next) {
+  try {
+    const { id } = req.params;
 
-module.exports = { getExpense, createExpense, updateExpense};
+    if ( !id ) {
+      return res.status(400).json({ error: "Missing expense id." });
+    }
+
+    const deleteExpense = databaseService.deleteExpense(id)
+
+    if ( deleteExpense) {
+      return res.json({message: 'Expense deleted!'});
+    }
+  } catch (error) {
+    console.error("Error deleting expense:", error)
+
+    return res.status(500).json({error: "Failed to delete expense."})
+  }
+
+}
+
+
+module.exports = { getExpense, createExpense, updateExpense, deleteExpense};

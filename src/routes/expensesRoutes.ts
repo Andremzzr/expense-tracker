@@ -1,6 +1,6 @@
 
 import express from "express";
-const { getExpense, createExpense, updateExpense } = require('../controllers/expensesController')
+const { getExpense, createExpense, updateExpense, deleteExpense } = require('../controllers/expensesController')
 const router = express.Router();
 
 /**
@@ -24,9 +24,7 @@ router.put("/:id", updateExpense);
 /**
  * Delete Expense route
  */
-router.delete("/:id", function (req, res) {
-    res.send("POST EXPENSE");
-});
+router.delete("/:id", deleteExpense);
 
 
 module.exports = router;

@@ -38,14 +38,14 @@ export class PgSqlService implements IDatabaseService {
       return result.rowCount > 0;
     }
   
-    async updateExpense(id: number, expense: Partial<Omit<IExpense, "id">>): Promise<boolean> {
-      const fields = Object.keys(expense).map((key, index) => `${key} = $${index + 2}`).join(', ');
+    async updateExpense(id: number, expense: Partial<Omit<IExpense, "id">>, userId: number): Promise<boolean> {
+      const fields = Object.keys(expense).map((key, index) => `${key} = $${index + 3}`).join(', ');
       const values = Object.values(expense);
       if (fields.length === 0) return false;
       
       const result = await this.connector.query(
-        `UPDATE expenses SET ${fields} WHERE id = $1 RETURNING id`,
-        [id, ...values]
+        `UPDATE expenses SET ${fields} WHERE id = $1 and userid = $2 RETURNING id`,
+        [id, userId, ...values]
       );
       return result.rowCount > 0;
     }

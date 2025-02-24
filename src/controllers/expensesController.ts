@@ -47,12 +47,13 @@ async function createExpense(req, res, next) {
 
 
 async function updateExpense(req, res, next) {
+  const { user } = req;
   try {
-    const { value, description, date, userid } = req.body;
+    const { value, description, date } = req.body;
     const { id } = req.params;
 
     
-    if (!value && !description && !date && !userid) {
+    if (!value && !description && !date) {
       return res.status(400).json({ error: "No fields selected." });
     }
 
@@ -61,9 +62,8 @@ async function updateExpense(req, res, next) {
     if (value !== undefined) updatePayload.value = value;
     if (description !== undefined) updatePayload.description = description;
     if (date !== undefined) updatePayload.date = date;
-    if (userid !== undefined) updatePayload.userid = userid;
 
-    const expenseUpdated = await databaseService.updateExpense(id, updatePayload);
+    const expenseUpdated = await databaseService.updateExpense(id, updatePayload, user.userId);
     
     if( !expenseUpdated ) {
       return res.status(404).json({ error: "Expense not found or wasn't updated." });

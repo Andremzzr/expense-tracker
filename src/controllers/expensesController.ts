@@ -5,9 +5,18 @@ const { databaseService } = require('../services/PgSqlService')
 async function getExpense(req, res, next) {
   const { id } = req.params;
   const { user } = req
-  console.log(user)
   try {
-    const expense = await databaseService.getExpense(id);
+    const expense = await databaseService.getExpense(id, user.userId);
+    return res.json(expense)
+  } catch (error) {
+    return res.status(500).json({ error: "Failed to get expense. Please try again later." });
+  }
+}
+
+async function getExpenses(req, res, next) {
+  const { user } = req
+  try {
+    const expense = await databaseService.getExpenses(user.userId);
     return res.json(expense)
   } catch (error) {
     return res.status(500).json({ error: "Failed to get expense. Please try again later." });
@@ -15,15 +24,16 @@ async function getExpense(req, res, next) {
 }
 
 async function createExpense(req, res, next) {
-  const { value, description, date, userid } = req.body;
-
-  if (!value || !description || !date || !userid) {
+  const { value, description, date } = req.body;
+  const { user } = req
+  
+  if (!value || !description || !date) {
     return res.status(400).json({ error: "All fields are required." });
   }
 
   try {
     
-    const expense = await databaseService.createExpense({ value, description, date, userid });
+    const expense = await databaseService.createExpense({ value, description, date, userid: user.userId });
 
     return res.json({message: 'Success!'});
 
@@ -90,4 +100,4 @@ async function deleteExpense(req, res, next) {
 }
 
 
-module.exports = { getExpense, createExpense, updateExpense, deleteExpense};
+module.exports = { getExpense, getExpenses, createExpense, updateExpense, deleteExpense};

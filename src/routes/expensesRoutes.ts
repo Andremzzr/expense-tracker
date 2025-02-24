@@ -1,6 +1,6 @@
 
 import express from "express";
-const { getExpense, createExpense, updateExpense, deleteExpense } = require('../controllers/expensesController');
+const { getExpense,getExpenses,  createExpense, updateExpense, deleteExpense } = require('../controllers/expensesController');
 const { jwtAuth } = require('../middlewares/auth');
 const router = express.Router();
 
@@ -9,6 +9,7 @@ const router = express.Router();
  */
 router.get("/:id", jwtAuth, getExpense );
 
+router.get("/", jwtAuth, getExpenses);
 
 /**
  * Create Expense route

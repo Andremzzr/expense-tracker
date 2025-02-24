@@ -19,9 +19,15 @@ export class PgSqlService implements IDatabaseService {
       this.connector = connector;
     }
   
-    async getExpense(id: number): Promise<IExpense | undefined> {
-      const result = await this.connector.query('SELECT * FROM expenses WHERE id = $1', [id]);
+    async getExpense(id: number, userId: number): Promise<IExpense | undefined> {
+      const result = await this.connector.query('SELECT * FROM expenses WHERE id = $1 and userid = $2', [id, userId]);
       return result.rows[0] || undefined;
+    }
+
+    async getExpenses(userId: number): Promise<IExpense | undefined> {
+      console.log(userId)
+      const result = await this.connector.query('SELECT * FROM expenses WHERE  userid = $1', [userId]);
+      return result.rows || [];
     }
   
     async createExpense(expense: Omit<IExpense, "id">): Promise<boolean> {

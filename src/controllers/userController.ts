@@ -6,7 +6,6 @@ const jwt = require('jsonwebtoken');
 async function registerUser(req, res, next) {
     try {
         const { username, password } = req.body;
-        console.log(username, password)
         const hashedPassword = await bcrypt.hash(password, 10);
         const user = databaseService.createUser({ username, password: hashedPassword });
 
@@ -20,11 +19,16 @@ async function registerUser(req, res, next) {
 async function loginUser(req, res, next) {
     try {
         const { username, password } = req.body;
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const user = databaseService.getUser({ username, password: hashedPassword });
+        const user = await databaseService.getUser({ username });
 
         if ( !user ) {
-            res.status(401).json({error: "No match user with credentials"})
+            return res.status(401).json({error: "No match user with credentials"})
+        }
+
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+
+        if (!isPasswordValid) {
+            return res.status(401).json({ error: "Invalid credentials" });
         }
 
         const token = jwt.sign({ userId: user.id }, process.env.TOKEN_SECRET , { expiresIn: '1h', });

@@ -3,8 +3,10 @@ import { IExpense } from "../interfaces/IExpense";
 const { databaseService } = require('../services/PgSqlService')
 
 async function getExpense(req, res, next) {
+  const { id } = req.params;
+  const { user } = req
+  console.log(user)
   try {
-    const { id } = req.params;
     const expense = await databaseService.getExpense(id);
     return res.json(expense)
   } catch (error) {
@@ -13,12 +15,13 @@ async function getExpense(req, res, next) {
 }
 
 async function createExpense(req, res, next) {
+  const { value, description, date, userid } = req.body;
+
+  if (!value || !description || !date || !userid) {
+    return res.status(400).json({ error: "All fields are required." });
+  }
+
   try {
-    const { value, description, date, userid } = req.body;
-    
-    if (!value || !description || !date || !userid) {
-      return res.status(400).json({ error: "All fields are required." });
-    }
     
     const expense = await databaseService.createExpense({ value, description, date, userid });
 

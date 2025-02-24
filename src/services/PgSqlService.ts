@@ -60,10 +60,9 @@ export class PgSqlService implements IDatabaseService {
 
     async getUser(user: IUser): Promise<IUser | undefined> {
       const result = await this.connector.query(
-        'SELECT * from users WHERE name = $1 and password = $2',
-        [user.username, user.password]
+        'SELECT * from users WHERE name = $1',
+        [user.username]
       );
-
       return result.rows[0] || undefined;
     }
   }

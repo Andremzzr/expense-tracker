@@ -1,5 +1,16 @@
 import { IDatabaseService } from "../interfaces/IDatabaseService";
 import { IExpense } from "../interfaces/IExpense";
+import { IUser } from "../interfaces/IUser";
+import { Pool } from 'pg';
+
+const pool = new Pool({
+  user: 'user',
+  password: 'pass',
+  host: 'localhost',
+  port: 5432,
+  database: 'database'
+});
+
 
 export class PgSqlService implements IDatabaseService {
     connector: any;
@@ -37,4 +48,27 @@ export class PgSqlService implements IDatabaseService {
       const result = await this.connector.query('DELETE FROM expenses WHERE id = $1', [id]);
       return result.rowCount > 0;
     }
+
+    async createUser(user: IUser): Promise<boolean> {
+      const result = await this.connector.query(
+        'INSERT INTO users (name, password) VALUES ($1, $2) RETURNING id',
+        [user.username, user.password]
+      );
+
+      return result.rowCount > 0;
+    }
+
+    async getUser(user: IUser): Promise<IUser | undefined> {
+      const result = await this.connector.query(
+        'SELECT * from users WHERE name = $1 and password = $2',
+        [user.username, user.password]
+      );
+
+      return result.rows[0] || undefined;
+    }
   }
+
+
+const databaseService = new PgSqlService(pool);
+
+module.exports = { databaseService }

@@ -1,16 +1,6 @@
 import { PgSqlService } from "../services/PgSqlService";
 import { IExpense } from "../interfaces/IExpense";
-import { Pool } from 'pg';
-
-const pool = new Pool({
-  user: 'user',
-  password: 'pass',
-  host: 'localhost',
-  port: 5432,
-  database: 'database'
-});
-
-const databaseService = new PgSqlService(pool);
+const { databaseService } = require('../services/PgSqlService')
 
 async function getExpense(req, res, next) {
   try {

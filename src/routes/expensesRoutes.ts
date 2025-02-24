@@ -1,30 +1,31 @@
 
 import express from "express";
-const { getExpense, createExpense, updateExpense, deleteExpense } = require('../controllers/expensesController')
+const { getExpense, createExpense, updateExpense, deleteExpense } = require('../controllers/expensesController');
+const { jwtAuth } = require('../middlewares/auth');
 const router = express.Router();
 
 /**
  * Get expeneses 
  */
-router.get("/:id", getExpense );
+router.get("/:id", jwtAuth, getExpense );
 
 
 /**
  * Create Expense route
  */
-router.post("/", createExpense);
+router.post("/", jwtAuth , createExpense);
 
 
 /**
  * Update Expense route
  */
-router.put("/:id", updateExpense);
+router.put("/:id", jwtAuth, updateExpense);
 
 
 /**
  * Delete Expense route
  */
-router.delete("/:id", deleteExpense);
+router.delete("/:id", jwtAuth , deleteExpense);
 
 
 module.exports = router;

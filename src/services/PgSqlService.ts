@@ -19,14 +19,13 @@ export class PgSqlService implements IDatabaseService {
       this.connector = connector;
     }
   
-    async getExpense(id: number, userId: number): Promise<IExpense | undefined> {
-      const result = await this.connector.query('SELECT * FROM expenses WHERE id = $1 and userid = $2', [id, userId]);
+    async getExpense(id: number, userid: number): Promise<IExpense | undefined> {
+      const result = await this.connector.query('SELECT * FROM expenses WHERE id = $1 and userid = $2', [id, userid]);
       return result.rows[0] || undefined;
     }
 
-    async getExpenses(userId: number): Promise<IExpense | undefined> {
-      console.log(userId)
-      const result = await this.connector.query('SELECT * FROM expenses WHERE  userid = $1', [userId]);
+    async getExpenses(userid: number): Promise<IExpense | undefined> {
+      const result = await this.connector.query('SELECT * FROM expenses WHERE  userid = $1', [userid]);
       return result.rows || [];
     }
   
@@ -38,20 +37,20 @@ export class PgSqlService implements IDatabaseService {
       return result.rowCount > 0;
     }
   
-    async updateExpense(id: number, expense: Partial<Omit<IExpense, "id">>, userId: number): Promise<boolean> {
+    async updateExpense(id: number, expense: Partial<Omit<IExpense, "id">>, userid: number): Promise<boolean> {
       const fields = Object.keys(expense).map((key, index) => `${key} = $${index + 3}`).join(', ');
       const values = Object.values(expense);
       if (fields.length === 0) return false;
       
       const result = await this.connector.query(
         `UPDATE expenses SET ${fields} WHERE id = $1 and userid = $2 RETURNING id`,
-        [id, userId, ...values]
+        [id, userid, ...values]
       );
       return result.rowCount > 0;
     }
   
-    async deleteExpense(id: number): Promise<boolean> {
-      const result = await this.connector.query('DELETE FROM expenses WHERE id = $1', [id]);
+    async deleteExpense(id: number, userid: number): Promise<boolean> {
+      const result = await this.connector.query('DELETE FROM expenses WHERE id = $1 and userid = $2', [id, userid]);
       return result.rowCount > 0;
     }
 

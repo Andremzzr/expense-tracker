@@ -79,18 +79,21 @@ async function updateExpense(req, res, next) {
 }
 
 async function deleteExpense(req, res, next) {
+  const { id } = req.params;
+  const { user } = req;
+
+  if ( !id ) {
+    return res.status(400).json({ error: "Missing expense id." });
+  }
   try {
-    const { id } = req.params;
-
-    if ( !id ) {
-      return res.status(400).json({ error: "Missing expense id." });
-    }
-
-    const deleteExpense = databaseService.deleteExpense(id)
+    const deleteExpense = await databaseService.deleteExpense(id, user.userId)
 
     if ( deleteExpense) {
-      return res.json({message: 'Expense deleted!'});
+      return res.status(200).json({message: 'Expense deleted!'});
     }
+
+    return res.status(500).json({message: 'Failed to deleted!'});
+    
   } catch (error) {
     console.error("Error deleting expense:", error)
 

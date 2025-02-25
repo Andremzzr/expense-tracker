@@ -26,8 +26,10 @@ function getFilterQuery( filter: FilterOption) {
       
       break;
     case FilterOption.LastMonth:
-      const month = (new Date()).getMonth() + 1
-      filterQuery = `and MONTH(date) > ${pastWeek}`
+      const now = new Date();
+      const startOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1); // Start of last month
+      const endOfLastMonth = new Date(now.getFullYear(), now.getMonth(), 0); // End of last month
+      filterQuery = `AND date >= '${startOfLastMonth.toISOString()}'::timestamptz AND date <= '${endOfLastMonth.toISOString()}'::timestamptz`;      
       break;
     default:
       break;

@@ -1,6 +1,13 @@
 import { PgSqlService } from "../services/PgSqlService";
 import { IExpense } from "../interfaces/IExpense";
+import { FilterOption } from "../interfaces/FilterOption";
 const { databaseService } = require('../services/PgSqlService')
+
+
+function isFilterOption(value: any): value is FilterOption {
+  return Object.values(FilterOption).includes(value);
+}
+
 
 async function getExpense(req, res, next) {
   const { id } = req.params;
@@ -15,10 +22,19 @@ async function getExpense(req, res, next) {
 
 async function getExpenses(req, res, next) {
   const { user } = req
+  const { filter } = req.query;
   try {
-    const expense = await databaseService.getExpenses(user.userId);
+    let expense;
+    if( isFilterOption(filter) )  {
+       expense = await databaseService.getExpenses(user.userId, filter);
+    } else 
+    {
+      expense = await databaseService.getExpenses(user.userId);
+    }
+
     return res.json(expense)
   } catch (error) {
+    console.error(error)
     return res.status(500).json({ error: "Failed to get expense. Please try again later." });
   }
 }

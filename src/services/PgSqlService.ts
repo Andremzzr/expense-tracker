@@ -1,3 +1,4 @@
+import { FilterOption } from "../interfaces/FilterOption";
 import { IDatabaseService } from "../interfaces/IDatabaseService";
 import { IExpense } from "../interfaces/IExpense";
 import { IUser } from "../interfaces/IUser";
@@ -12,6 +13,30 @@ const pool = new Pool({
 });
 
 
+
+function getFilterQuery( filter: FilterOption) {
+  let filterQuery = "";
+  switch (filter) {
+    case FilterOption.PastWeek:
+      const currentDate = new Date();
+
+      const pastWeek = new Date(currentDate.setDate(currentDate.getDate() - 7));
+      
+      filterQuery = `and date > '${pastWeek.toISOString()}'::timestamptz`
+      
+      break;
+    case FilterOption.LastMonth:
+      const month = (new Date()).getMonth() + 1
+      filterQuery = `and MONTH(date) > ${pastWeek}`
+      break;
+    default:
+      break;
+  }
+
+  return filterQuery
+}
+
+
 export class PgSqlService implements IDatabaseService {
     connector: any;
   
@@ -24,8 +49,13 @@ export class PgSqlService implements IDatabaseService {
       return result.rows[0] || undefined;
     }
 
-    async getExpenses(userid: number): Promise<IExpense | undefined> {
-      const result = await this.connector.query('SELECT * FROM expenses WHERE  userid = $1', [userid]);
+    async getExpenses(userid: number, filter: FilterOption | undefined = undefined): Promise<IExpense | undefined> {
+      let filterQuery: string = "";
+      if ( filter ) {
+        filterQuery = getFilterQuery(filter)
+      }
+      console.log(filterQuery)
+      const result = await this.connector.query(`SELECT * FROM expenses WHERE  userid = $1 ${filterQuery}`, [userid]);
       return result.rows || [];
     }
   

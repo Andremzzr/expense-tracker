@@ -8,6 +8,14 @@ function isFilterOption(value: any): value is FilterOption {
   return Object.values(FilterOption).includes(value);
 }
 
+function getPage(page: number) {
+    if ( !page ) {
+      return 1
+    }
+
+    return page
+}
+
 
 async function getExpense(req, res, next) {
   const { id } = req.params;
@@ -24,19 +32,21 @@ async function getExpenses(req, res, next) {
   const { user } = req
   const { filter, page } = req.query;
 
+  const currentPage = getPage(page)
+
   try {
     let expense;
     const totalRows = await databaseService.getExpensesTotalPages( user.userId );
-    const totalPages = Math.ceil(totalRows / 50)
-    console.log(page)
+    const totalPages = Math.ceil(totalRows / 50);
+
     if( isFilterOption(filter) )  {
-      expense = await databaseService.getExpenses(user.userId, filter, page);
+      expense = await databaseService.getExpenses(user.userId, filter, currentPage);
     } else 
     {
-      expense = await databaseService.getExpenses(user.userId, undefined, page);
+      expense = await databaseService.getExpenses(user.userId, undefined, currentPage);
     }
 
-    return res.json({totalPages: totalPages, data: expense})
+    return res.json({totalPages, currentPage , data: expense})
 
   } catch (error) {
     console.error(error)

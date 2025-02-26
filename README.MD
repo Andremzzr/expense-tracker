@@ -1,6 +1,8 @@
 # Expense Tracker
 Application has porpouse to be an api for a frontend application that tracks user expenses using JWT authentication. 
 
+## Application setup:
+Run ``` npm install ``` on the root dir.
 
 ### Database Setup:
 - Run: docker compose up -d on the /docker dir
@@ -32,3 +34,13 @@ SELECT
     CASE WHEN RANDOM() > 0.5 THEN 3 ELSE 4 END AS userid
 FROM generate_series(1, 200);
 ```
+
+### Aplication Routes:
+```/user``` handles all authentication process. Login and Register.
+```/expense``` are the protected routes, that handles all aplication logic, such as:
+ - returning data;
+ - creating and updating;
+ - deleting;
+
+### Middleware:
+auth.ts handles the jwt auth authentication using jsonwebtoken for token creation.

@@ -39,10 +39,10 @@ async function getExpenses(req, res, next) {
     const totalRows = await databaseService.getExpensesTotalPages( user.userId );
     const totalPages = Math.ceil(totalRows / 50);
 
-    if( isFilterOption(filter) )  {
+    if ( isFilterOption(filter) )  {
       expense = await databaseService.getExpenses(user.userId, filter, currentPage);
-    } else 
-    {
+    } 
+    else {
       expense = await databaseService.getExpenses(user.userId, undefined, currentPage);
     }
 

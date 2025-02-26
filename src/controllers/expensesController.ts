@@ -22,17 +22,22 @@ async function getExpense(req, res, next) {
 
 async function getExpenses(req, res, next) {
   const { user } = req
-  const { filter } = req.query;
+  const { filter, page } = req.query;
+
   try {
     let expense;
+    const totalRows = await databaseService.getExpensesTotalPages( user.userId );
+    const totalPages = Math.ceil(totalRows / 50)
+    console.log(page)
     if( isFilterOption(filter) )  {
-       expense = await databaseService.getExpenses(user.userId, filter);
+      expense = await databaseService.getExpenses(user.userId, filter, page);
     } else 
     {
-      expense = await databaseService.getExpenses(user.userId);
+      expense = await databaseService.getExpenses(user.userId, undefined, page);
     }
 
-    return res.json(expense)
+    return res.json({totalPages: totalPages, data: expense})
+
   } catch (error) {
     console.error(error)
     return res.status(500).json({ error: "Failed to get expense. Please try again later." });

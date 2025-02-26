@@ -45,19 +45,29 @@ export class PgSqlService implements IDatabaseService {
     constructor(connector: any) {
       this.connector = connector;
     }
+
+    async getExpensesTotalPages(userid: number) {
+      const result = await this.connector.query('SELECT COUNT(*) AS total_rows FROM expenses where userid = $1', [userid]);
+
+      if (result.rows.length) {
+        return result.rows[0]["total_rows"]
+      }
+
+      return 0
+    }
   
     async getExpense(id: number, userid: number): Promise<IExpense | undefined> {
       const result = await this.connector.query('SELECT * FROM expenses WHERE id = $1 and userid = $2', [id, userid]);
       return result.rows[0] || undefined;
     }
 
-    async getExpenses(userid: number, filter: FilterOption | undefined = undefined): Promise<IExpense | undefined> {
+    async getExpenses(userid: number, filter: FilterOption | undefined = undefined, page: number = 1): Promise<IExpense | undefined> {
       let filterQuery: string = "";
       if ( filter ) {
         filterQuery = getFilterQuery(filter)
       }
-      console.log(filterQuery)
-      const result = await this.connector.query(`SELECT * FROM expenses WHERE  userid = $1 ${filterQuery}`, [userid]);
+      const offset = (page - 1) * 50;
+      const result = await this.connector.query(`SELECT * FROM expenses WHERE userid = $2 ${filterQuery} ORDER BY date DESC  LIMIT 50 OFFSET $1 `, [offset, userid]);
       return result.rows || [];
     }
   

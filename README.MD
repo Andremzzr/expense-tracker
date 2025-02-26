@@ -1,7 +1,11 @@
 # Expense Tracker
 Application has porpouse to be an api for a frontend application that tracks user expenses using JWT authentication. 
 
-## Application setup:
+### Architecture:
+![projects achitecture](https://assets.roadmap.sh/guest/expense-tracker-api-m72p5.png)
+
+
+### Application setup:
 Run ``` npm install ``` on the root dir.
 
 ### Database Setup:

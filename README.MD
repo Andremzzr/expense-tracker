@@ -41,10 +41,65 @@ FROM generate_series(1, 200);
 
 ### Aplication Routes:
 ```/user``` handles all authentication process. Login and Register.
+<br>
 ```/expense``` are the protected routes, that handles all aplication logic, such as:
- - returning data;
- - creating and updating;
- - deleting;
+# Expense API
+
+Simple API for managing user expenses.
+
+## Endpoints
+
+### Get Single Expense
+```
+GET /expenses/:id
+```
+Returns a specific expense by ID.
+
+### List Expenses
+```
+GET /expenses?filter=OPTION&page=NUMBER
+```
+Returns paginated expenses with optional filtering.
+
+### Create Expense
+```
+POST /expenses
+```
+**Body:**
+```json
+{
+  "value": 100.00,
+  "description": "Grocery shopping",
+  "date": "2023-11-15"
+}
+```
+Creates a new expense.
+
+### Update Expense
+```
+PUT /expenses/:id
+```
+**Body:** Any of these fields
+```json
+{
+  "value": 120.00,
+  "description": "Updated description",
+  "date": "2023-11-16"
+}
+```
+Updates an existing expense.
+
+### Delete Expense
+```
+DELETE /expenses/:id
+```
+Deletes an expense.
+
+## Notes
+- All endpoints require authentication
+- Pagination shows 50 items per page
+- All dates use YYYY-MM-DD format
+- All responses include success messages or error details
 
 ### Middleware:
 auth.ts handles the jwt auth authentication using jsonwebtoken for token creation.
